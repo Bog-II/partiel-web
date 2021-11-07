@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
-import { dbPool } from '../config/mysql.config';
-import { deleteCustomerByID, getAllCustomers, getCustomerByID } from '../models/customers.model';
+import {
+  createNewCustomer,
+  deleteCustomerByID,
+  getAllCustomers,
+  getCustomerByID,
+  updateCustomerByID,
+} from '../models/customers.model';
 
 export const getCustomers = (req: Request, res: Response) => {
   getAllCustomers((err, resQuery) => {
@@ -24,7 +29,7 @@ export const getCustomer = (req: Request, res: Response) => {
   const { customerNumber } = params;
 
   const id = parseInt(customerNumber);
-  
+
   getCustomerByID(id, (err, resQuery) => {
     if (err) {
       res.status(500).send({
@@ -64,29 +69,26 @@ export const updateCustomer = (req: Request, res: Response) => {
   const { body, params } = req;
   const { customerNumber } = params;
 
+  const id = parseInt(customerNumber);
+
   const modifiedVals: string[] = [];
   for (const property in body) {
     modifiedVals.push(`${property} = '${body[property]}'`);
   }
   const set = modifiedVals.join(', ');
 
-  dbPool.query(
-    `UPDATE customers SET ${set} WHERE customerNumber = ?`,
-    [customerNumber],
-    (err, _) => {
-      if (err) {
-        console.log(err);
-        res
-          .status(500)
-          .send({ success: false, message: 'unsuccessful modification' });
-      } else {
-        res.status(200).send({
-          success: true,
-          message: 'successful customer modification',
-        });
-      }
+  updateCustomerByID(id, set, (err) => {
+    if (err) {
+      res
+        .status(500)
+        .send({ success: false, message: 'unsuccessful modification' });
+    } else {
+      res.status(200).send({
+        success: true,
+        message: 'successful customer modification',
+      });
     }
-  );
+  });
 };
 
 export const createCustomer = (req: Request, res: Response) => {
@@ -107,24 +109,21 @@ export const createCustomer = (req: Request, res: Response) => {
     creditLimit,
   } = body;
 
-  dbPool.query(
-    'insert  into `customers`(`customerNumber`,`customerName`,`contactLastName`,`contactFirstName`,`phone`,`addressLine1`,`addressLine2`,`city`,`state`,`postalCode`,`country`,`salesRepEmployeeNumber`,`creditLimit`) values (?,?,?,?,?,?,?,?,?,?,?,?,?)',
-    [
-      customerNumber,
-      customerName,
-      contactLastName,
-      contactFirstName,
-      phone,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      postalCode,
-      country,
-      salesRepEmployeeNumber,
-      creditLimit,
-    ],
-    (err, _) => {
+  createNewCustomer(
+    customerNumber,
+    customerName,
+    contactLastName,
+    contactFirstName,
+    phone,
+    addressLine1,
+    addressLine2,
+    city,
+    state,
+    postalCode,
+    country,
+    salesRepEmployeeNumber,
+    creditLimit,
+    (err) => {
       if (err) {
         res
           .status(500)
@@ -137,6 +136,4 @@ export const createCustomer = (req: Request, res: Response) => {
       }
     }
   );
-
-  console.log(body);
 };

@@ -29,7 +29,6 @@ export const getCustomerByID = (
   );
 };
 
-
 export const deleteCustomerByID = (
   customerNumber: number,
   callback: (err: Error | null) => void
@@ -37,7 +36,7 @@ export const deleteCustomerByID = (
   dbPool.query(
     `DELETE FROM customers WHERE customerNumber = ?`,
     [customerNumber],
-    (err) => {
+    (err, _) => {
       if (err) {
         callback(err);
       } else {
@@ -49,12 +48,56 @@ export const deleteCustomerByID = (
 
 export const updateCustomerByID = (
   customerNumber: number,
+  set: string,
   callback: (err: Error | null) => void
 ) => {
   dbPool.query(
-    `DELETE FROM customers WHERE customerNumber = ?`,
+    `UPDATE customers SET ${set} WHERE customerNumber = ?`,
     [customerNumber],
-    (err) => {
+    (err, _) => {
+      if (err) {
+        callback(err);
+      } else {
+        callback(null);
+      }
+    }
+  );
+};
+
+export const createNewCustomer = (
+  customerNumber: string,
+  customerName: string,
+  contactLastName: string,
+  contactFirstName: string,
+  phone: string,
+  addressLine1: string,
+  addressLine2: string,
+  city: string,
+  state: string,
+  postalCode: string,
+  country: string,
+  salesRepEmployeeNumber: string,
+  creditLimit: string,
+  callback: (err: Error | null) => void
+) => {
+  dbPool.query(
+    'insert  into `customers`(`customerNumber`,`customerName`,`contactLastName`,`contactFirstName`,`phone`,`addressLine1`,`addressLine2`,`city`,`state`,`postalCode`,`country`,`salesRepEmployeeNumber`,`creditLimit`) values (?,?,?,?,?,?,?,?,?,?,?,?,?)',
+    [
+      customerNumber,
+      customerName,
+      contactLastName,
+      contactFirstName,
+      phone,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      postalCode,
+      country,
+      salesRepEmployeeNumber,
+      creditLimit,
+    ],
+    (err, _) => {
       if (err) {
         callback(err);
       } else {

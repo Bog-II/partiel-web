@@ -1,20 +1,21 @@
 import { Request, Response } from 'express';
 import { dbPool } from '../config/mysql.config';
+import { deleteCustomerByID, getAllCustomers, getCustomerByID } from '../models/customers.model';
 
 export const getCustomers = (req: Request, res: Response) => {
-  dbPool.query('SELECT * FROM customers', (err, resQuery) => {
+  getAllCustomers((err, resQuery) => {
     if (err) {
       res.status(500).send({
         success: false,
         message: 'unsuccessful request',
       });
+    } else {
+      res.status(200).send({
+        success: true,
+        numberOfCustomers: resQuery.length,
+        cutomers: resQuery,
+      });
     }
-
-    res.status(200).send({
-      success: true,
-      numberOfCustomers: resQuery.length,
-      cutomers: resQuery,
-    });
   });
 };
 
@@ -22,45 +23,41 @@ export const getCustomer = (req: Request, res: Response) => {
   const { params } = req;
   const { customerNumber } = params;
 
-  dbPool.query(
-    'SELECT * FROM customers WHERE customerNumber = ?',
-    customerNumber,
-    (err, resQuery) => {
-      if (err) {
-        res.status(500).send({
-          success: false,
-          message: 'unsuccessful request',
-        });
-      }
+  const id = parseInt(customerNumber);
+  
+  getCustomerByID(id, (err, resQuery) => {
+    if (err) {
+      res.status(500).send({
+        success: false,
+        message: 'unsuccessful request',
+      });
+    } else {
       res.status(200).send({
         success: true,
         cutomer: resQuery,
       });
     }
-  );
+  });
 };
 
 export const deleteCustomer = (req: Request, res: Response) => {
   const { params } = req;
   const { customerNumber } = params;
 
-  dbPool.query(
-    `DELETE FROM customers WHERE customerNumber = ?`,
-    [customerNumber],
-    (err, _) => {
-      if (err) {
-        console.log(err);
-        res
-          .status(500)
-          .send({ success: false, message: 'unsuccessful deletion' });
-      } else {
-        res.status(200).send({
-          success: true,
-          message: 'successful customer deletion',
-        });
-      }
+  const id = parseInt(customerNumber);
+
+  deleteCustomerByID(id, (err) => {
+    if (err) {
+      res
+        .status(500)
+        .send({ success: false, message: 'unsuccessful deletion' });
+    } else {
+      res.status(200).send({
+        success: true,
+        message: 'successful customer deletion',
+      });
     }
-  );
+  });
 };
 
 export const updateCustomer = (req: Request, res: Response) => {

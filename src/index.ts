@@ -4,10 +4,6 @@ import { apiRouter } from './routes/api.route';
 import env from 'dotenv';
 env.config();
 
-// import { dbPool } from './config/mysql.config';
-
-// console.log(dbPool);
-
 const app = express();
 
 // app.get('/', (req, res) => {

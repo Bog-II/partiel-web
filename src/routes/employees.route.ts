@@ -32,11 +32,15 @@ router.get('/:employeeNumber', (req, res) => {
     employeeNumber,
     (err, resQuery) => {
       if (err) {
-        res
-          .status(404)
-          .send({ success: false, message: 'unsuccessful request' });
+        res.status(404).send({
+          success: false,
+          message: 'unsuccessful request',
+        });
       }
-      res.status(200).send({ success: true, cutomer: resQuery });
+      res.status(200).send({
+        success: true,
+        cutomer: resQuery,
+      });
     }
   );
 });

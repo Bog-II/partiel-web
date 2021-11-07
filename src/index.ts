@@ -1,6 +1,7 @@
-import env from 'dotenv';
 import express from 'express';
 import { apiRouter } from './routes/api.route';
+
+import env from 'dotenv';
 env.config();
 
 // import { dbPool } from './config/mysql.config';

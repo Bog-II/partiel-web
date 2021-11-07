@@ -1,50 +1,31 @@
 import express from 'express';
 
-import { dbPool } from '../config/mysql.config';
+import {
+  createCustomer,
+  deleteCustomer,
+  getCustomer,
+  getCustomers,
+  updateCustomer,
+} from '../controllers/customers.controller';
+import { checkValidParemeterID } from '../middlewares/checkValidParemeterID';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  dbPool.query('SELECT * FROM customers', (err, resQuery) => {
-    if (err) {
-      res.status(404).send({
-        success: false,
-        message: 'unsuccessful request',
-      });
-    }
+// Middlewares
+router.use(express.urlencoded());
+router.use(express.json());
 
-    res.status(200).send({
-      success: true,
-      numberOfCustomers: resQuery.length,
-      cutomers: resQuery,
-    });
-  });
-});
+// GET
+router.get('/', getCustomers);
+router.get('/:customerNumber', checkValidParemeterID, getCustomer);
 
-router.get('/:customerNumber', (req, res) => {
-  const { params } = req;
-  const { customerNumber } = params;
+// POST
+router.post('/', createCustomer);
 
-  console.log(params);
+// PUT
+router.put('/:customerNumber', checkValidParemeterID, updateCustomer);
 
-  dbPool.query(
-    'SELECT * FROM customers WHERE customerNumber = ?',
-    customerNumber,
-    (err, resQuery) => {
-      if (err) {
-        res
-          .status(404)
-          .send({ success: false, message: 'unsuccessful request' });
-      }
-      res.status(200).send({ success: true, cutomer: resQuery });
-    }
-  );
-});
-
-// router.post('/', );
-
-// router.put('/:customer_id', );
-
-// router.delete('/:customer_id', );
+// DELETE
+router.delete('/:customerNumber', checkValidParemeterID, deleteCustomer);
 
 export { router as customersRouter };

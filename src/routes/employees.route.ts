@@ -41,4 +41,12 @@ router.get('/:employeeNumber', (req, res) => {
   );
 });
 
+router.use(express.urlencoded());
+router.use(express.json());
+
+router.post('/', (req, res) => {
+  const { body } = req;
+  res.send(body);
+});
+
 export { router as employeesRouter };

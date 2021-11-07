@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
-import { getAllEmployees, getClientsFromEmployeeByID, getEmployeeByID } from '../models/employees.model';
+import {
+  getAllEmployees,
+  getClientsByEmployeeID,
+  getEmployeeByID,
+} from '../models/employees.model';
 
 export const getEmployees = (req: Request, res: Response) => {
   getAllEmployees((err, resQuery) => {
@@ -11,7 +15,7 @@ export const getEmployees = (req: Request, res: Response) => {
     } else {
       res.status(200).send({
         success: true,
-        numberOfCustomers: resQuery.length,
+        numberOfEmployee: resQuery.length,
         employees: resQuery,
       });
     }
@@ -45,7 +49,7 @@ export const getClientFromEmployee = (req: Request, res: Response) => {
 
   const id = parseInt(employeeNumber);
 
-  getClientsFromEmployeeByID(id, (err, resQuery) => {
+  getClientsByEmployeeID(id, (err, resQuery) => {
     if (err) {
       res.status(500).send({
         success: false,

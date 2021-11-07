@@ -29,7 +29,7 @@ export const getEmployeeByID = (
   );
 };
 
-export const getClientsFromEmployeeByID = (
+export const getClientsByEmployeeID = (
   employeeNumber: number,
   callback: (err: Error | null, res: Array<any>) => void
 ) => {

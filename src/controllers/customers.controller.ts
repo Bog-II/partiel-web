@@ -18,7 +18,7 @@ export const getCustomers = (req: Request, res: Response) => {
       res.status(200).send({
         success: true,
         numberOfCustomers: resQuery.length,
-        cutomers: resQuery,
+        customers: resQuery,
       });
     }
   });
@@ -39,7 +39,7 @@ export const getCustomer = (req: Request, res: Response) => {
     } else {
       res.status(200).send({
         success: true,
-        cutomer: resQuery,
+        customerData: resQuery,
       });
     }
   });

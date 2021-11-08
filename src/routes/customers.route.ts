@@ -18,6 +18,21 @@ router.use(express.json());
 // GET
 router.get('/', getCustomers);
 router.get('/:customerNumber', checkValidParemeterID, getCustomer);
+/**
+ * @swagger
+ * /customers/:customerNumber:
+ *   get:
+ *      description: Get customer by customerNumber
+ *      tags:
+ *          - customer
+ *      responses:
+ *          '200':
+ *              description: Resource returned successfully
+ *          '500':
+ *              description: Internal server error
+ *          '400':
+ *              description: Bad request
+ */
 
 // POST
 router.post('/', createCustomer);

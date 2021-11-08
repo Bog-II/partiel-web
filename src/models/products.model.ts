@@ -1,7 +1,36 @@
 import { dbPool } from '../config/mysql.config';
 
+export const getAllProducts = (
+  callback: (err: Error | null, res: Array<any>) => void
+) => {
+  dbPool.query('SELECT * FROM products', (errQuery: Error, resQuery) => {
+    if (errQuery) {
+      callback(errQuery, []);
+    } else {
+      callback(null, resQuery);
+    }
+  });
+};
+
+export const getProductByID = (
+  productCode: string,
+  callback: (err: Error | null, res: Object) => void
+) => {
+  dbPool.query(
+    'SELECT * FROM products WHERE productCode = ?',
+    productCode,
+    (err, resQuery) => {
+      if (err) {
+        callback(err, {});
+      } else {
+        callback(null, resQuery);
+      }
+    }
+  );
+};
+
 export const deleteProductByID = (
-  productCode: number,
+  productCode: string,
   callback: (err: Error | null) => void
 ) => {
   dbPool.query(
@@ -18,7 +47,7 @@ export const deleteProductByID = (
 };
 
 export const updateProductByID = (
-  productCode: number,
+  productCode: string,
   set: string,
   callback: (err: Error | null) => void
 ) => {
@@ -48,7 +77,7 @@ export const createNewProduct = (
   callback: (err: Error | null) => void
 ) => {
   dbPool.query(
-    'insert  into `products`(`customerNumber`,`customerName`,`contactLastName`,`contactFirstName`,`phone`,`addressLine1`,`addressLine2`,`city`,`state`) values (?,?,?,?,?,?,?,?,?)',
+    'INSERT INTO `products`(`productCode`,`productName`,`productLine`,`productScale`,`productVendor`,`productDescription`,`quantityInStock`,`buyPrice`,`MSRP`) values (?,?,?,?,?,?,?,?,?)',
     [
       productCode,
       productName,
@@ -62,6 +91,8 @@ export const createNewProduct = (
     ],
     (err, _) => {
       if (err) {
+        console.log(err);
+
         callback(err);
       } else {
         callback(null);

@@ -3,6 +3,8 @@ import {
   getAllEmployees,
   getClientsByEmployeeID,
   getEmployeeByID,
+  getEmployeesWithMostPaymentsAndLimit,
+  getMostAssignedEmployeesWithLimit,
 } from '../models/employees.model';
 
 export const getEmployees = (req: Request, res: Response) => {
@@ -20,6 +22,64 @@ export const getEmployees = (req: Request, res: Response) => {
       });
     }
   });
+};
+
+export const getMostAssignedEmployees = (req: Request, res: Response) => {
+  let { limit } = req.query;
+  if (limit === undefined) {
+    limit = '10';
+  }
+  if (/^\d+$/.test(String(limit))) {
+    const limitInteger = parseInt(String(limit));
+    getMostAssignedEmployeesWithLimit(limitInteger, (err, resQuery) => {
+      if (err) {
+        res.status(500).send({
+          success: false,
+          message: 'unsuccessful request',
+        });
+      } else {
+        res.status(200).send({
+          success: true,
+          length: resQuery.length,
+          data: resQuery,
+        });
+      }
+    });
+  } else {
+    res.status(400).send({
+      success: false,
+      message: 'bad query parameter',
+    });
+  }
+};
+
+export const getEmployeesWithMostPayments = (req: Request, res: Response) => {
+  let { limit } = req.query;
+  if (limit === undefined) {
+    limit = '10';
+  }
+  if (/^\d+$/.test(String(limit))) {
+    const limitInteger = parseInt(String(limit));
+    getEmployeesWithMostPaymentsAndLimit(limitInteger, (err, resQuery) => {
+      if (err) {
+        res.status(500).send({
+          success: false,
+          message: 'unsuccessful request',
+        });
+      } else {
+        res.status(200).send({
+          success: true,
+          length: resQuery.length,
+          data: resQuery,
+        });
+      }
+    });
+  } else {
+    res.status(400).send({
+      success: false,
+      message: 'bad query parameter',
+    });
+  }
 };
 
 export const getEmployee = (req: Request, res: Response) => {

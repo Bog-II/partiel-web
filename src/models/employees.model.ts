@@ -12,6 +12,40 @@ export const getAllEmployees = (
   });
 };
 
+export const getMostAssignedEmployeesWithLimit = (
+  limit: number,
+  callback: (err: Error | null, res: Array<any>) => void
+) => {
+  dbPool.query(
+    'SELECT e.* FROM employees e LEFT JOIN customers c ON c.salesRepEmployeeNumber = e.employeeNumber GROUP BY (e.employeeNumber) ORDER BY count(e.employeeNumber) DESC LIMIT ?',
+    limit,
+    (errQuery, resQuery) => {
+      if (errQuery) {
+        callback(errQuery, []);
+      } else {
+        callback(null, resQuery);
+      }
+    }
+  );
+};
+
+export const getEmployeesWithMostPaymentsAndLimit = (
+  limit: number,
+  callback: (err: Error | null, res: Array<any>) => void
+) => {
+  dbPool.query(
+    'SELECT e.* FROM employees e LEFT JOIN customers c ON c.salesRepEmployeeNumber = e.employeeNumber LEFT JOIN payments p ON p.customerNumber = c.customerNumber GROUP BY (e.employeeNumber) ORDER BY SUM(p.amount) DESC LIMIT ?',
+    limit,
+    (errQuery, resQuery) => {
+      if (errQuery) {
+        callback(errQuery, []);
+      } else {
+        callback(null, resQuery);
+      }
+    }
+  );
+};
+
 export const getEmployeeByID = (
   employeeNumber: number,
   callback: (err: Error | null, res: Object) => void
@@ -45,81 +79,3 @@ export const getClientsByEmployeeID = (
     }
   );
 };
-
-// export const deleteCustomerByID = (
-//   customerNumber: number,
-//   callback: (err: Error | null) => void
-// ) => {
-//   dbPool.query(
-//     `DELETE FROM customers WHERE customerNumber = ?`,
-//     [customerNumber],
-//     (err, _) => {
-//       if (err) {
-//         callback(err);
-//       } else {
-//         callback(null);
-//       }
-//     }
-//   );
-// };
-
-// export const updateCustomerByID = (
-//   customerNumber: number,
-//   set: string,
-//   callback: (err: Error | null) => void
-// ) => {
-//   dbPool.query(
-//     `UPDATE customers SET ${set} WHERE customerNumber = ?`,
-//     [customerNumber],
-//     (err, _) => {
-//       if (err) {
-//         callback(err);
-//       } else {
-//         callback(null);
-//       }
-//     }
-//   );
-// };
-
-// export const createNewCustomer = (
-//   customerNumber: string,
-//   customerName: string,
-//   contactLastName: string,
-//   contactFirstName: string,
-//   phone: string,
-//   addressLine1: string,
-//   addressLine2: string,
-//   city: string,
-//   state: string,
-//   postalCode: string,
-//   country: string,
-//   salesRepEmployeeNumber: string,
-//   creditLimit: string,
-//   callback: (err: Error | null) => void
-// ) => {
-//   dbPool.query(
-//     'insert  into `customers`(`customerNumber`,`customerName`,`contactLastName`,`contactFirstName`,`phone`,`addressLine1`,`addressLine2`,`city`,`state`,`postalCode`,`country`,`salesRepEmployeeNumber`,`creditLimit`) values (?,?,?,?,?,?,?,?,?,?,?,?,?)',
-//     [
-//       customerNumber,
-//       customerName,
-//       contactLastName,
-//       contactFirstName,
-//       phone,
-//       addressLine1,
-//       addressLine2,
-//       city,
-//       state,
-//       postalCode,
-//       country,
-//       salesRepEmployeeNumber,
-//       creditLimit,
-//     ],
-//     (err, _) => {
-//       if (err) {
-//         callback(err);
-//       } else {
-//         callback(null);
-//       }
-//     }
-//   );
-// };

@@ -12,10 +12,6 @@ const router = express.Router();
 
 import { checkValidParemeterID } from '../middlewares/checkValidParemeterID';
 
-// Middlewares
-router.use(express.urlencoded());
-router.use(express.json());
-
 // GET
 router.get('/', getOffices);
 router.get('/:officeCode', checkValidParemeterID, getOffice);
@@ -33,5 +29,25 @@ router.put('/:officeCode', checkValidParemeterID, updateOffice);
 
 // DELETE
 router.delete('/:officeCode', checkValidParemeterID, deleteOffice);
+/**
+ * @swagger
+ * /api/v1/orders/{orderNumber}:
+ *   get:
+ *      description: Used to get an order
+ *      tags:
+ *          - orders
+ *      parameters:
+ *          - in: path
+ *            name: orderNumber
+ *            type: integer
+ *            required: true
+ *      responses:
+ *          '200':
+ *              description: Successfull request
+ *          '500':
+ *              description: Internal server error
+ *          '400':
+ *              description: Bad request
+ */
 
 export { router as officesRouter };

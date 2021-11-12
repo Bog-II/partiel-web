@@ -5,34 +5,17 @@ import {
   deleteCustomer,
   getCustomer,
   getCustomers,
+  getLastCustomerOrders,
   updateCustomer,
 } from '../controllers/customers.controller';
 import { checkValidParemeterID } from '../middlewares/checkValidParemeterID';
 
 const router = express.Router();
 
-// Middlewares
-router.use(express.urlencoded());
-router.use(express.json());
-
 // GET
 router.get('/', getCustomers);
 router.get('/:customerNumber', checkValidParemeterID, getCustomer);
-/**
- * @swagger
- * /customers/:customerNumber:
- *   get:
- *      description: Get customer by customerNumber
- *      tags:
- *          - customer
- *      responses:
- *          '200':
- *              description: Resource returned successfully
- *          '500':
- *              description: Internal server error
- *          '400':
- *              description: Bad request
- */
+router.get('/:customerNumber/getLastCustomerOrders', checkValidParemeterID, getLastCustomerOrders);
 
 // POST
 router.post('/', createCustomer);

@@ -4,6 +4,7 @@ import {
   deleteCustomerByID,
   getAllCustomers,
   getCustomerByID,
+  getLastCustomerOrdersWithLimit,
   updateCustomerByID,
 } from '../models/customers.model';
 
@@ -136,4 +137,37 @@ export const createCustomer = (req: Request, res: Response) => {
       }
     }
   );
+};
+
+export const getLastCustomerOrders = (req: Request, res: Response) => {
+  const { customerNumber } = req.params;
+  let { limit } = req.query;
+  if (limit === undefined) {
+    limit = '1';
+  }
+
+  const id = parseInt(customerNumber);
+
+  if (/^\d+$/.test(String(limit))) {
+    const limitInteger = parseInt(String(limit));
+    getLastCustomerOrdersWithLimit(id, limitInteger, (err, resQuery) => {
+      if (err) {
+        res.status(500).send({
+          success: false,
+          message: 'unsuccessful request',
+        });
+      } else {
+        res.status(200).send({
+          success: true,
+          length: resQuery.length,
+          data: resQuery,
+        });
+      }
+    });
+  } else {
+    res.status(400).send({
+      success: false,
+      message: 'bad query parameter',
+    });
+  }
 };

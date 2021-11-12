@@ -45,3 +45,62 @@ export const getProductsByOrderID = (
     }
   );
 };
+
+export const addProductByOrderID = (
+  orderNumber: string,
+  productCode: string,
+  quantityOrdered: string,
+  priceEach: string,
+  orderLineNumber: string,
+  callback: (err: Error | null) => void
+) => {
+  dbPool.query(
+    'INSERT INTO orderdetails (orderNumber, productCode, quantityOrdered, priceEach,orderLineNumber) values (?,?,?,?,?)',
+    [orderNumber, productCode, quantityOrdered, priceEach, orderLineNumber],
+    (errQuery) => {
+      if (errQuery) {
+        callback(errQuery);
+      } else {
+        callback(null);
+      }
+    }
+  );
+};
+
+export const deleteProdctByOrderID = (
+  orderNumber: string,
+  productCode: string,
+  callback: (err: Error | null) => void
+) => {
+  dbPool.query(
+    'DELETE FROM `orderdetails` WHERE (orderNumber = ?) & (productCode = ?)',
+    [orderNumber, productCode],
+    (errQuery) => {
+      if (errQuery) {
+        callback(errQuery);
+      } else {
+        callback(null);
+      }
+    }
+  );
+};
+
+export const updateProductByOrderID = (
+  orderNumber: string,
+  productCode: string,
+  set: string,
+  callback: (err: Error | null) => void
+) => {
+  dbPool.query(
+    `UPDATE orderdetails SET ${set} WHERE orderNumber = ? & productCode = ?`,
+    [orderNumber, productCode],
+    (errQuery) => {
+      console.log(errQuery);
+      if (errQuery) {
+        callback(errQuery);
+      } else {
+        callback(null);
+      }
+    }
+  );
+};

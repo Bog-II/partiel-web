@@ -106,3 +106,21 @@ export const createNewCustomer = (
     }
   );
 };
+
+export const getLastCustomerOrdersWithLimit = (
+  customerNumber: number,
+  limit: number,
+  callback: (err: Error | null, res: Array<any>) => void
+) => {
+  dbPool.query(
+    'SELECT * FROM orders where customerNumber = ? ORDER BY orderDate DESC LIMIT ?',
+    [customerNumber, limit],
+    (errQuery, resQuery) => {
+      if (errQuery) {
+        callback(errQuery, []);
+      } else {
+        callback(null, resQuery);
+      }
+    }
+  );
+};

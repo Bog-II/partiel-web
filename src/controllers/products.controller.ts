@@ -37,7 +37,7 @@ export const getProduct = (req: Request, res: Response) => {
     } else {
       res.status(200).send({
         success: true,
-        productData: resQuery,
+        product: resQuery,
       });
     }
   });

@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import { getAllCustomers } from '../models/customers.model';
 import {
+  addProductByOrderID,
+  deleteProdctByOrderID,
   getAllOrders,
   getOrderByID,
   getProductsByOrderID,
+  updateProductByOrderID,
 } from '../models/orders.model';
 
 export const getOrders = (req: Request, res: Response) => {
@@ -38,7 +41,7 @@ export const getOrder = (req: Request, res: Response) => {
     } else {
       res.status(200).send({
         success: true,
-        orderData: resQuery,
+        data: resQuery,
       });
     }
   });
@@ -59,101 +62,76 @@ export const getProductsFromOrder = (req: Request, res: Response) => {
     } else {
       res.status(200).send({
         success: true,
-        productsOrder: resQuery,
+        numberOfProducts: resQuery.length,
+        products: resQuery,
       });
     }
   });
 };
 
-// export const deleteCustomer = (req: Request, res: Response) => {
-//   const { params } = req;
-//   const { customerNumber } = params;
+export const addProduct = (req: Request, res: Response) => {
+  const { orderNumber } = req.params;
+  const { body } = req;
+  const { productCode, quantityOrdered, priceEach, orderLineNumber } = body;
 
-//   const id = parseInt(customerNumber);
+  addProductByOrderID(
+    orderNumber,
+    productCode,
+    quantityOrdered,
+    priceEach,
+    orderLineNumber,
+    (err) => {
+      if (err) {
+        res
+          .status(500)
+          .send({ success: false, message: 'unsuccessful creation' });
+      } else {
+        res.status(200).send({
+          success: true,
+          message: 'product successfully added',
+        });
+      }
+    }
+  );
+};
 
-//   deleteCustomerByID(id, (err) => {
-//     if (err) {
-//       res
-//         .status(500)
-//         .send({ success: false, message: 'unsuccessful deletion' });
-//     } else {
-//       res.status(200).send({
-//         success: true,
-//         message: 'successful customer deletion',
-//       });
-//     }
-//   });
-// };
+export const deleteProduct = (req: Request, res: Response) => {
+  const { orderNumber, productCode } = req.params;
 
-// export const updateCustomer = (req: Request, res: Response) => {
-//   const { body, params } = req;
-//   const { customerNumber } = params;
+  deleteProdctByOrderID(orderNumber, productCode, (err) => {
+    if (err) {
+      res
+        .status(500)
+        .send({ success: false, message: 'unsuccessful creation' });
+    } else {
+      res.status(200).send({
+        success: true,
+        message: 'product successfully deleted',
+      });
+    }
+  });
+};
 
-//   const id = parseInt(customerNumber);
+export const updateProduct = (req: Request, res: Response) => {
+  const { orderNumber, productCode } = req.params;
+  const { body } = req;
 
-//   const modifiedVals: string[] = [];
-//   for (const property in body) {
-//     modifiedVals.push(`${property} = '${body[property]}'`);
-//   }
-//   const set = modifiedVals.join(', ');
-
-//   updateCustomerByID(id, set, (err) => {
-//     if (err) {
-//       res
-//         .status(500)
-//         .send({ success: false, message: 'unsuccessful modification' });
-//     } else {
-//       res.status(200).send({
-//         success: true,
-//         message: 'successful customer modification',
-//       });
-//     }
-//   });
-// };
-
-// export const createCustomer = (req: Request, res: Response) => {
-//   const { body } = req;
-//   const {
-//     customerNumber,
-//     customerName,
-//     contactLastName,
-//     contactFirstName,
-//     phone,
-//     addressLine1,
-//     addressLine2,
-//     city,
-//     state,
-//     postalCode,
-//     country,
-//     salesRepEmployeeNumber,
-//     creditLimit,
-//   } = body;
-
-//   createNewCustomer(
-//     customerNumber,
-//     customerName,
-//     contactLastName,
-//     contactFirstName,
-//     phone,
-//     addressLine1,
-//     addressLine2,
-//     city,
-//     state,
-//     postalCode,
-//     country,
-//     salesRepEmployeeNumber,
-//     creditLimit,
-//     (err) => {
-//       if (err) {
-//         res
-//           .status(500)
-//           .send({ success: false, message: 'unsuccessful creation' });
-//       } else {
-//         res.status(200).send({
-//           success: true,
-//           message: 'customer successfully created',
-//         });
-//       }
-//     }
-//   );
-// };
+  const modifiedVals: string[] = [];
+  for (const property in body) {
+    modifiedVals.push(`${property} = '${body[property]}'`);
+  }
+  const set = modifiedVals.join(', ');
+  
+  updateProductByOrderID(orderNumber, productCode, set, (err) => {
+    if (err) {
+      res
+        .status(500)
+        .send({ success: false, message: 'unsuccessful request' });
+    } else {
+      res.status(200).send({
+        success: true,
+        message: 'product successfully updated',
+      });
+    }
+  });
+};

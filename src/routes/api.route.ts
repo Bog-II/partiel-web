@@ -10,6 +10,10 @@ import { paymentsRouter } from './payments.route';
 import { productLinesRouter } from './productlines.route';
 import { productsRouter } from './products.route';
 
+// Middlewares
+apiRouter.use(express.urlencoded());
+apiRouter.use(express.json());
+
 apiRouter.use('/customers', customersRouter);
 apiRouter.use('/employees', employeesRouter);
 apiRouter.use('/offices', officesRouter);

@@ -1,0 +1,1 @@
+import { dbPool } from '../config/mysql.config';

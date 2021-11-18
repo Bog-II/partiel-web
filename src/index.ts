@@ -12,9 +12,21 @@ const PORT = process.env.PORT || 5000;
 const swaggerJsdoc = require('swagger-jsdoc');
 import swaggerUi from 'swagger-ui-express';
 
-// app.get('/', (req, res) => {
-//   res.status(200).send('Home page');
-// });
+// EXPRESS HANDLEBARS
+const exphbs = require('express-handlebars');
+// import exphbs from 'express-handlebars';
+
+app.set('views', './views');
+app.set('view engine', '.hbs');
+
+app.engine(
+  'hbs',
+  exphbs.engine({
+    extname: '.hbs',
+    defaultLayout: '',
+    layoutsDir: '',
+  })
+);
 
 app.use('/api/v1', apiRouter);
 

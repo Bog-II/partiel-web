@@ -1,24 +1,34 @@
 import express from 'express';
 import { apiRouter } from './routes/api.route';
+import { authRouter } from './routes/auth.route';
 
 const app = express();
 
 import env from 'dotenv';
 env.config();
 
-const PORT = process.env.PORT || 5000;
+import path from 'path';
+
+
 
 //ADD SWAGGER MODULES
 const swaggerJsdoc = require('swagger-jsdoc');
 import swaggerUi from 'swagger-ui-express';
 
+import passport from 'passport';
+import session from 'express-session';
+
+const SECRET_KEY = process.env.SECRET_KEY || 'td8';
+app.use(session({ secret: SECRET_KEY, resave: true, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 // EXPRESS HANDLEBARS
 const exphbs = require('express-handlebars');
 // import exphbs from 'express-handlebars';
-
-app.set('views', './views');
+const pathExpressHandleBar = path.resolve(__dirname, './views');
+app.set('views', pathExpressHandleBar);
 app.set('view engine', '.hbs');
-
 app.engine(
   'hbs',
   exphbs.engine({
@@ -28,7 +38,9 @@ app.engine(
   })
 );
 
+/** Routes */
 app.use('/api/v1', apiRouter);
+authRouter(app, passport);
 
 /** Swagger Initialization - START */
 const swaggerOption = {
@@ -50,6 +62,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 /** Swagger Initialization - END */
 
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`The server is listening on http://localhost:${PORT}`);
 });
